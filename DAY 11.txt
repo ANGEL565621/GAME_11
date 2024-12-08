@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Typing Speed Test</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: #1a1a2e;
+            color: #f1f1f1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            margin: 0;
+        }
+        h1 {
+            font-size: 2.5rem;
+            margin-bottom: 20px;
+            color: #00adb5;
+        }
+        .sentence-container {
+            font-size: 1.5rem;
+            background: #0f3460;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5);
+            max-width: 700px;
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        .input-area {
+            width: 80%;
+            max-width: 600px;
+            padding: 12px;
+            font-size: 1.2rem;
+            border: none;
+            outline: none;
+            background-color: #16213e;
+            color: #f1f1f1;
+            border-radius: 5px;
+            text-align: center;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5);
+        }
+        .timer {
+            margin-top: 10px;
+            font-size: 1.2rem;
+            color: #e94560;
+        }
+        .buttons {
+            margin-top: 20px;
+        }
+        button {
+            padding: 10px 20px;
+            font-size: 1rem;
+            margin: 5px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        .start-btn {
+            background-color: #00adb5;
+            color: #fff;
+        }
+        .start-btn:hover {
+            background-color: #007b9e;
+        }
+        .restart-btn {
+            background-color: #e94560;
+            color: #fff;
+        }
+        .restart-btn:hover {
+            background-color: #c42c47;
+        }
+        #result {
+            margin-top: 20px;
+            font-size: 1.5rem;
+            color: #f08a5d;
+        }
+    </style>
+</head>
+<body>
+    <h1>Typing Speed Test</h1>
+    <div class="sentence-container" id="sentence">
+        Press **Start** to begin typing.
+    </div>
+    <input 
+        type="text" 
+        id="inputArea" 
+        class="input-area" 
+        placeholder="Start typing here..." 
+        disabled 
+    />
+    <div class="timer" id="timer">Time: 0s</div>
+    <div class="buttons">
+        <button class="start-btn" id="startBtn">Start</button>
+        <button class="restart-btn" id="restartBtn" disabled>Restart</button>
+    </div>
+    <div id="result"></div>
+
+    <script>
+        const sentences = [
+            "The quick brown fox jumps over the lazy dog.",
+            "Practice makes perfect.",
+            "All that glitters is not gold.",
+            "Better late than never.",
+            "A journey of a thousand miles begins with a single step.",
+            "To be or not to be, that is the question.",
+            "Success is not final, failure is not fatal.",
+            "Opportunities don't happen, you create them."
+        ];
+
+        const sentenceElement = document.getElementById("sentence");
+        const inputArea = document.getElementById("inputArea");
+        const startBtn = document.getElementById("startBtn");
+        const restartBtn = document.getElementById("restartBtn");
+        const timerElement = document.getElementById("timer");
+        const resultElement = document.getElementById("result");
+
+        let currentSentence = "";
+        let startTime = null;
+        let timerInterval;
+
+        function startGame() {
+            currentSentence = sentences[Math.floor(Math.random() * sentences.length)];
+            sentenceElement.textContent = currentSentence;
+
+            inputArea.disabled = false;
+            inputArea.value = "";
+            inputArea.focus();
+
+            startTime = new Date().getTime();
+            timerElement.textContent = "Time: 0s";
+            resultElement.textContent = "";
+
+            startBtn.disabled = true;
+            restartBtn.disabled = false;
+
+            clearInterval(timerInterval);
+            timerInterval = setInterval(updateTimer, 100);
+        }
+
+        function updateTimer() {
+            const currentTime = new Date().getTime();
+            const elapsedTime = ((currentTime - startTime) / 1000).toFixed(1);
+            timerElement.textContent = `Time: ${elapsedTime}s`;
+        }
+
+        function endGame() {
+            clearInterval(timerInterval);
+
+            const elapsedTime = ((new Date().getTime() - startTime) / 1000).toFixed(1);
+            if (inputArea.value.trim() === currentSentence) {
+                resultElement.textContent = `Well done! You completed in ${elapsedTime} seconds.`;
+            } else {
+                resultElement.textContent = "Oops! Your input doesn't match the sentence.";
+            }
+
+            inputArea.disabled = true;
+        }
+
+        function restartGame() {
+            clearInterval(timerInterval);
+
+            inputArea.disabled = true;
+            sentenceElement.textContent = "Press **Start** to begin typing.";
+            inputArea.value = "";
+            timerElement.textContent = "Time: 0s";
+            resultElement.textContent = "";
+
+            startBtn.disabled = false;
+            restartBtn.disabled = true;
+        }
+
+        // Event Listeners
+        startBtn.addEventListener("click", startGame);
+        restartBtn.addEventListener("click", restartGame);
+
+        inputArea.addEventListener("input", () => {
+            if (inputArea.value.trim() === currentSentence) {
+                endGame();
+            }
+        });
+    </script>
+</body>
+</html>
